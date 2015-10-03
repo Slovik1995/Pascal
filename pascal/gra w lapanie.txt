@@ -1,0 +1,49 @@
+uses dos, crt,Graph;
+var ster, tryb,x1,y1,x2,y2: smallint;
+    tab: array [0..14] of array [0..14] of char;
+    xx,yy,y_base,x_base  :smallint;
+    x, i , j: integer;
+///////////POCZATEK PROGRAMU/////////////////////
+begin
+ster:=VGA;  tryb:=VGAHi;
+InitGraph(ster, tryb, 'C:\Documents and Settings\piotslow\Pulpit' );
+//////////////INICJACJA ZMIENNYCH GLOBALNYCH////////////////////////
+for i:=14 to 0 do begin
+for j:=14 to 0 do begin
+tab[i][j]:='p';
+end;
+end;
+
+
+xx:=50;
+yy:=50;
+x_base:=xx;
+y_base:=yy;
+repeat
+
+randomize();
+x:=random(15);
+for i:=14 to 1 do begin
+for j:=14 to 0 do begin
+tab[i][j]:=tab[i-1][j];
+end;
+end;
+for i:=0 to 14 do begin tab[0][i]:='p';  end;
+tab[0][x]:='O';
+
+for i:=0 to 14 do begin
+for j:=0 to 14 do begin
+OutTextxy(xx, yy, tab[i][j]);
+xx:=xx+15;
+
+end;
+xx:=x_base;
+yy:=yy+15;
+end;
+yy:=y_base;
+xx:=x_base;
+
+delay(500);
+until(false);
+readkey;
+end.

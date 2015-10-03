@@ -1,0 +1,44 @@
+program trojkat_pascala;
+uses crt;
+var
+wysokosc , i, j, k,p : integer;
+tab : array[1..50] of integer;
+function pasc (wys : integer; el : integer) : integer;
+begin
+if ((el=1) or (el=wys)) then
+pasc:=1
+else pasc:=(pasc(wys-1,el-1)+ pasc(wys-1,el));
+end;
+
+begin
+writeln('Podaj wysokosc trojkata: ');
+
+readln(wysokosc);
+
+for i:=1 to wysokosc do
+begin
+    k:=1;
+    for j:=1 to i do
+     begin
+
+        tab[k]:=pasc(i,j);
+        k:=k+1;
+
+     end;
+    begin
+    p:=(100-5*i)div 2;
+    for k:=1 to p do begin write(' '); end;
+    for k:=1 to i do
+     begin
+         if (tab[k]<10) then begin write('  ',tab[k],'  '); end
+         else if (tab[k]<100) then begin write(' ',tab[k],'  '); end
+         else if (tab[k]<1000) then begin write(' ',tab[k],' '); end
+         else if (tab[k]<10000) then begin write(tab[k],' '); end
+     end;
+    end;
+    writeln;
+end;
+
+readkey;
+end.
+

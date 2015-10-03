@@ -1,0 +1,62 @@
+program deszczyk;
+uses dos, crt;
+var
+szer,a,i,b, wys: integer;
+tab: array of char;
+
+procedure losuj (szer: integer);
+  begin
+   randomize;
+   b:=random(szer);
+   b:=b+1;
+  end;
+
+procedure zamiana (a,szer, b: integer);
+begin
+  for i:=a downto szer+1 do
+    begin
+    tab[i]:=tab[i-szer];
+    end;
+  for i:=1 to szer do
+    begin
+    tab[i]:='o';
+    end ;
+  tab[b]:='X';
+end;
+
+procedure rysuj (a, szer: integer);
+begin
+ for i:=1 to a do
+  begin
+    write(tab[i]);
+    write(' ');
+    if ((i mod szer)=0) then begin writeln(); end;
+  end;
+end;
+
+  begin
+write('Podaj szerokosc: ');
+read(szer);
+write('Podaj wysokosc: ');
+read(wys);
+
+a:=szer*wys;
+setlength(tab, a);
+  clrscr();
+for i:=1 to a do
+  begin
+  tab[i]:='o';
+  end;
+
+repeat
+  losuj(szer);
+  zamiana(a, szer, b);
+  rysuj(a, szer);
+
+  delay(300);
+  clrscr();
+
+until 1<0;
+
+end.
+

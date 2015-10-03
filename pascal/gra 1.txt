@@ -1,0 +1,74 @@
+uses dos, crt,Graph, sysutils;
+var ster, tryb,x1,y1,x2,y2,x_s: smallint;
+    tab: array [0..14] of array [0..14] of char;
+    xx,yy,y_base,x_base  :smallint;
+    pp,war,x, i , j, licznik: integer;
+    m: char;
+///////////POCZATEK PROGRAMU/////////////////////
+begin
+ster:=VGA;  tryb:=VGAHi;
+InitGraph(ster, tryb, 'C:\Documents and Settings\piotslow\Pulpit' );
+//////////////INICJACJA ZMIENNYCH GLOBALNYCH////////////////////////
+for i:=0 to 15 do begin
+for j:=0 to 14 do begin
+tab[i][j]:=' ';
+end;
+end;
+pp:=0;
+licznik:=6;
+war:=0;
+x_s:=43;
+xx:=50;
+yy:=50;
+x_base:=xx;
+y_base:=yy;
+repeat
+cleardevice;
+
+
+if (keypressed=true) then begin m:=readkey;
+if(m='a') then begin if (x_s>=55) then begin x_s:=x_s-15; pp:=pp-1; end;  end;
+if(m='d') then begin if (x_s<=250) then begin x_s:=x_s+15; pp:=pp+1; end;  end;
+end;
+
+
+bar(x_s,320 ,x_s+15, 338);
+
+
+rectangle (43,48, 268,340);
+
+
+randomize();
+x:=random(15);
+for i:=15 downto 1 do begin
+for j:=14 downto 0 do begin
+tab[i][j]:=tab[i-1][j];
+end;
+end;
+for i:=0 to 14 do begin tab[0][i]:=' ';  end;
+if ((war mod 2)=0) then begin tab[0][x]:='O'; end;
+
+for i:=0 to 14 do begin
+for j:=0 to 14 do begin
+outtextxy(xx,yy, tab[i][j]);
+xx:=xx+15;
+end;
+xx:=x_base;
+yy:=yy+20;
+end;
+
+yy:=y_base;
+xx:=x_base;
+war:=war+1;
+
+
+if (tab[15][pp]='O') then begin licznik:=licznik+1; end;
+outtextxy(50,30,'wynik: ');
+outtextxy(103,30,inttostr(licznik));
+delay(100);
+
+
+
+until(false);
+readkey;
+end.

@@ -1,0 +1,1756 @@
+program statki;
+uses dos, crt,Graph;
+var ster, tryb,x1,y1,x2,y2: smallint;
+    i,j: integer;
+    tab3,tab1, tab2: array [0..16] of array [0..16] of integer;
+    tryb2, gracz1,gracz2,licz_stat_gracza1,licz_stat_gracza2,gracz, komputer,liczba_wszystkich_stat, wygral,licz_stat_kompa :integer;
+    loax,kon,pola,licz_stat_gracza, kier, wsp_y, wsp_x, zacznij_od_gory, licz_cofniecia: integer;
+    war_pola, x_base, y_base, licznik_cofniec,czy_strzela, tsp_x,tsp_y,tsp_k : integer;
+/////////////////RYSUJE ZARYS PLANSZY GRACZA//////////////////////////////////////////////
+  function plansza_gracza(tryb2: integer): integer;
+    begin
+         x1:=20;
+         y1:=50;
+
+         x2:=x1+15;
+         y2:=y1+15;
+
+         for i:=1 to 225 do begin
+
+             rectangle(x1,y1, x2, y2);
+             x1:=x1+15;
+             if ((i mod 15)=0) then begin x1:=x1-225; y1:=y1+15; y2:=y1+15 end;
+             x2:=x1+15;
+         end;
+
+         if (tryb2=1) then begin OutTextXY(20, 20,'GRACZ'); end;
+         if (tryb2=2) then begin OutTextXY(20, 20,'GRACZ 1'); end;
+         OutTextXY(24, 35,'1');
+         OutTextXY(39, 35,'2');
+         OutTextXY(54, 35,'3');
+         OutTextXY(69, 35,'4');
+         OutTextXY(84, 35,'5');
+         OutTextXY(99, 35,'6');
+         OutTextXY(114, 35,'7');
+         OutTextXY(129, 35,'8');
+         OutTextXY(144, 35,'9');
+         OutTextXY(156, 35,'1');
+         OutTextXY(162, 35,'0');
+         OutTextXY(172, 35,'1');
+         OutTextXY(178, 35,'1');
+         OutTextXY(187, 35,'1');
+         OutTextXY(192, 35,'2');
+         OutTextXY(202, 35,'1');
+         OutTextXY(207, 35,'3');
+         OutTextXY(217, 35,'1');
+         OutTextXY(222, 35,'4');
+         OutTextXY(232, 35,'1');
+         OutTextXY(238, 35,'5');
+
+                    OutTextXY(24+266, 35,'1');
+                    OutTextXY(39+266, 35,'2');
+                    OutTextXY(54+266, 35,'3');
+                    OutTextXY(69+266, 35,'4');
+                    OutTextXY(84+266, 35,'5');
+                    OutTextXY(99+266, 35,'6');
+                    OutTextXY(114+266, 35,'7');
+                    OutTextXY(129+266, 35,'8');
+                    OutTextXY(144+266, 35,'9');
+                    OutTextXY(156+266, 35,'1');
+                    OutTextXY(162+266, 35,'0');
+                    OutTextXY(172+266, 35,'1');
+                    OutTextXY(178+266, 35,'1');
+                    OutTextXY(187+266, 35,'1');
+                    OutTextXY(192+266, 35,'2');
+                    OutTextXY(202+266, 35,'1');
+                    OutTextXY(207+266, 35,'3');
+                    OutTextXY(217+266, 35,'1');
+                    OutTextXY(222+266, 35,'4');
+                    OutTextXY(232+266, 35,'1');
+                    OutTextXY(238+266, 35,'5');
+
+       plansza_gracza:=0;
+   end;
+/////////////////RYSUJE ZARYS PLANSZY KOMPA/////////////////////////////////////////////
+  function plansza_kompa(tryb2: integer): integer;
+    begin
+    x1:=285;
+    y1:=50;
+
+    x2:=x1+15;
+    y2:=y1+15;
+
+    for i:=1 to 225 do
+     begin
+          rectangle(x1,y1, x2, y2);
+          x1:=x1+15;
+          if ((i mod 15)=0) then begin x1:=x1-225; y1:=y1+15; y2:=y1+15 end;
+          x2:=x1+15;
+     end;
+
+
+     if (tryb2=1) then begin OutTextXY(20, 20,'GRACZ'); end;
+     if (tryb2=2) then begin OutTextXY(20, 20,'GRACZ 1'); end;
+     if (tryb2=1) then begin OutTextXY(286, 20,'KOMPUTER'); end;
+     if (tryb2=2) then begin OutTextXY(286, 20,'GRACZ 2'); end;
+
+
+     OutTextXY(10, 54,'1');
+     OutTextXY(10, 69,'2');
+     OutTextXY(10, 84,'3');
+     OutTextXY(10, 99,'4');
+     OutTextXY(10, 114,'5');
+     OutTextXY(10, 129,'6');
+     OutTextXY(10, 144,'7');
+     OutTextXY(10, 159,'8');
+     OutTextXY(10, 174,'9');
+     OutTextXY(4, 189,'10');
+     OutTextXY(4, 204,'11');
+     OutTextXY(4, 219,'12');
+     OutTextXY(4, 234,'13');
+     OutTextXY(4, 249,'14');
+     OutTextXY(4, 264,'15');
+
+     OutTextXY(276, 54,'1');
+     OutTextXY(276, 69,'2');
+     OutTextXY(276, 84,'3');
+     OutTextXY(276, 99,'4');
+     OutTextXY(276, 114,'5');
+     OutTextXY(276, 129,'6');
+     OutTextXY(276, 144,'7');
+     OutTextXY(276, 159,'8');
+     OutTextXY(276, 174,'9');
+     OutTextXY(269, 189,'10');
+     OutTextXY(269, 204,'11');
+     OutTextXY(269, 219,'12');
+     OutTextXY(269, 234,'13');
+     OutTextXY(269, 249,'14');
+     OutTextXY(269, 264,'15');
+
+  plansza_kompa:=0;
+ end;
+/////////////RYSUJE PLANSZE STATKOW KOMPUTERA///////////////////////////////////////////////////
+  function rysuj_komp() : integer;
+     begin
+     x1:=286;
+     y1:=51;
+
+
+     for i:=1 to 15 do begin
+     for j:=1 to 15 do begin
+
+         if ((tab2[i][j]=1)or (tab2[i][j]=2)) then
+         begin
+           SetFillStyle(1,9);
+           bar(x1, y1, x1+13,y1+13);
+         end
+
+         else if (tab2[i][j]=3) then
+         begin
+              SetFillStyle(1,4);
+              bar(x1, y1, x1+13,y1+13);
+         end
+
+         else if (tab2[i][j]=4) then
+         begin
+               SetFillStyle(1,1);
+               bar(x1, y1, x1+13,y1+13);
+         end;
+
+         x1:=x1+15;
+         if ((j mod 15)=0) then begin x1:=x1-225; y1:=y1+15; y2:=y1+13 end;
+         x2:=x1+13;
+
+
+         end;
+         end;
+     rysuj_komp:=0;
+  end;
+/////////////////////// RYSUJE PLANSZE STATKOW GRACZA 2 ///////////////////////////////////////////////
+function rysuj_gracz2() : integer;
+     begin
+     x1:=286;
+     y1:=51;
+
+
+     for i:=1 to 15 do begin
+     for j:=1 to 15 do begin
+
+         if ((tab3[i][j]=1)or (tab3[i][j]=2)) then
+         begin
+           SetFillStyle(1,9);
+           bar(x1, y1, x1+13,y1+13);
+         end
+
+         else if (tab3[i][j]=3) then
+         begin
+              SetFillStyle(1,4);
+              bar(x1, y1, x1+13,y1+13);
+         end
+
+         else if (tab3[i][j]=4) then
+         begin
+               SetFillStyle(1,1);
+               bar(x1, y1, x1+13,y1+13);
+         end;
+
+         x1:=x1+15;
+         if ((j mod 15)=0) then begin x1:=x1-225; y1:=y1+15; y2:=y1+13 end;
+         x2:=x1+13;
+
+
+         end;
+         end;
+     rysuj_gracz2:=0;
+  end;
+//////////// RYSUJE PLANSZE STATKOW GRACZA //////////////////////////////////////
+    function rysuj_gracz() : integer;
+       begin
+       x1:=21;
+       y1:=51;
+
+
+       for i:=1 to 15 do begin
+       for j:=1 to 15 do begin
+
+       if (tab1[i][j]=1) then
+       begin
+            SetFillStyle(1,9);
+            bar(x1, y1, x1+13,y1+13);
+       end
+
+       else if (tab1[i][j]=2) then
+       begin
+             SetFillStyle(1,7);
+             bar(x1, y1, x1+13,y1+13);
+       end
+
+       else if (tab1[i][j]=3) then
+       begin
+            SetFillStyle(1,4);
+            bar(x1, y1, x1+13,y1+13);
+       end
+
+       else if (tab1[i][j]=4) then
+       begin
+             SetFillStyle(1,1);
+             bar(x1, y1, x1+13,y1+13);
+       end;
+
+       x1:=x1+15;
+       if ((j mod 15)=0) then begin x1:=x1-225; y1:=y1+15; y2:=y1+13 end;
+       x2:=x1+13;
+
+
+       end;
+       end;
+    rysuj_gracz:=0;
+  end;
+/////////////////// RYSUJE PLANSZE STATKOW GRACZA 1 ///////////////////////////////////////////////////////////////
+function rysuj_gracz1() : integer;
+       begin
+       x1:=21;
+       y1:=51;
+
+
+       for i:=1 to 15 do begin
+       for j:=1 to 15 do begin
+
+       if ((tab1[i][j]=1)or(tab1[i][j]=2)) then
+       begin
+            SetFillStyle(1,9);
+            bar(x1, y1, x1+13,y1+13);
+       end
+
+
+
+       else if (tab1[i][j]=3) then
+       begin
+            SetFillStyle(1,4);
+            bar(x1, y1, x1+13,y1+13);
+       end
+
+       else if (tab1[i][j]=4) then
+       begin
+             SetFillStyle(1,1);
+             bar(x1, y1, x1+13,y1+13);
+       end;
+
+       x1:=x1+15;
+       if ((j mod 15)=0) then begin x1:=x1-225; y1:=y1+15; y2:=y1+13 end;
+       x2:=x1+13;
+
+
+       end;
+       end;
+    rysuj_gracz1:=0;
+  end;
+
+///////////////POBIERANIE POZYCJI STATKOW GRACZA///////////////////////////////////////
+  function tab_stat_gracz(tryb2: integer): integer;
+  var x_ter,y_ter,licznik,i,dl_stat,x,poziom,pion, poz_x, poz_y,war,war2 : integer;
+      obrot : integer;
+
+  begin
+       if (tryb2=1) then begin rysuj_gracz(); rysuj_komp(); end;
+       if (tryb2=2) then begin rysuj_gracz1(); rysuj_gracz2(); end;
+
+       war:=1;
+       war2:=1;
+       licznik:=1;
+       repeat
+             if ((war=1) and (war2=1)) then
+             begin
+                  case licznik of
+                    1: dl_stat:=2;
+                    2: dl_stat:=3;
+                    3: dl_stat:=3;
+                    4: dl_stat:=4;
+             end;
+
+
+       poziom:=10;
+       pion:=20;
+
+
+       x:=poziom;
+       repeat
+//
+             cleardevice;
+
+              plansza_gracza(tryb2);
+              plansza_kompa(tryb2);
+              if (tryb2=1) then begin rysuj_komp(); rysuj_gracz(); end;
+              if (tryb2=2) then begin rysuj_gracz2(); rysuj_gracz1(); end;
+
+              OutTextXY(20, 300,'Aby obrocic statek wcisnij 1. Aby przejsc do wyboru pola wcisnij 2.');
+              rectangle(18, 333, 150, 390);
+              OutTextXY(20, 335,'Polozenie statku');
+
+              if (x=poziom) then
+              begin
+
+                   if (dl_stat=2) then
+                      begin
+                      OutTextXY(20, 350,'[][]');
+                      end
+
+                   else if(dl_stat=3) then
+                      begin
+                      OutTextXY(20, 350,'[][][]');
+                      end
+
+                   else if (dl_stat=4) then
+                      begin
+                      OutTextXY(20, 350,'[][][][]');
+                       end;
+              end;
+
+              if (x=pion) then begin
+
+                   if (dl_stat=2) then
+                      begin
+                      OutTextXY(20, 350,'[]');
+                      OutTextXY(20, 360,'[]');
+                      end
+                   else if(dl_stat=3) then
+                        begin
+                        OutTextXY(20, 350,'[]');
+                        OutTextXY(20, 360,'[]');
+                        OutTextXY(20, 370,'[]');
+                        end
+                   else if (dl_stat=4) then
+                        begin
+                        OutTextXY(20, 350,'[]');
+                        OutTextXY(20, 360,'[]');
+                        OutTextXY(20, 370,'[]');
+                        OutTextXY(20, 380,'[]');
+                        end;
+              end;
+
+///
+          read(obrot);
+
+          if (obrot=1) then
+          begin
+               if (x=poziom) then
+                  begin
+                   x:=pion;
+                  end
+
+               else begin x:=poziom; end;
+          end;
+
+          until (obrot=2);
+          setcolor(0);
+          OutTextXY(20, 300,'Aby obrocic statek wcisnij 1. Aby przejsc do wyboru pola wcisnij 2.');
+          setcolor(15);
+
+      end;
+          OutTextXY(20, 300,'Podaj nr wiersza w ktorym umieszczony bedzie lewy gorny kraniec statku (np. 4):  ');
+          read(poz_y);
+
+
+          setcolor(0);
+          OutTextXY(20, 300,'Podaj nr wiersza w ktorym umieszczony bedzie lewy gorny kraniec statku (np. 4):  ');
+          setcolor(15);
+          OutTextXY(20, 300,'Podaj nr kolumny w ktorym umieszczony bedzie lewy gorny kraniec statku (np. 7):  ');
+          read(poz_x);
+
+
+          setcolor(0);
+          OutTextXY(20, 300,'Podaj nr kolumny w ktorym umieszczony bedzie lewy gorny kraniec statku (np. 7):  ');
+          setcolor(15);
+          if (tryb2=1) then begin rysuj_gracz(); end;
+          if (tryb2=2) then begin rysuj_gracz1(); end;
+
+
+          war:=1;
+          war2:=1;
+          if (x=poziom) then
+             begin
+               if(((poz_x+dl_stat-1)<16) and (poz_x>0) and (poz_y>0) and (poz_y<16)) then
+                 begin
+
+                 begin
+                      x_ter:=poz_x-1;
+                      y_ter:=poz_y-1;
+                            for j:=1 to 3 do begin
+                                 for i:=0 to (dl_stat+2) do begin
+                                   if (tab1[y_ter][x_ter]=1) then begin x_ter:=x_ter+1; end
+                                   else begin war:=0; end;
+                                 end;
+                             x_ter:=poz_x-1;
+                             y_ter:=y_ter+1;
+                            end;
+                      x_ter:=0;
+                      y_ter:=0;
+                 end;
+
+                  if (war=1) then begin
+
+                  for i:=0 to (dl_stat-1) do
+                      begin
+                             tab1[poz_y][poz_x]:=2;
+                             poz_x:=poz_x+1;
+                      end;
+                  end;
+                end
+
+                 else war2:=0;
+           end
+           else if (x=pion) then begin
+                if(((poz_y+dl_stat-1)<16) and (poz_y>0) and (poz_x>0) and (poz_x<16)) then
+                   begin
+                      begin
+                           x_ter:=poz_x-1;
+                           y_ter:=poz_y-1;
+
+                           for j:=1 to 3 do begin
+                               for i:=0 to dl_stat+2 do  begin
+                                 if (tab1[y_ter][x_ter]=1) then
+                                 begin
+                                  y_ter:=y_ter+1;
+                                 end
+                                 else begin war:=0; end;
+                               end;
+                             y_ter:=poz_y-1;
+                             x_ter:=x_ter+1;
+                           end;
+                           y_ter:=0;
+                           x_ter:=0;
+                      end;
+
+                      if(war=1) then begin
+
+                         for i:=0 to dl_stat-1 do begin
+                           tab1[poz_y][poz_x]:=2;
+                           poz_y:=poz_y+1;
+                         end;
+                      end;
+                end
+           else war2:=0;
+           end;
+
+          if (war=0) then
+            begin
+                 OutTextXY(20, 300,'W tym miejscu zanjduje sie juz statek! Jeszcze raz.');
+                 delay(1500);
+
+                 setcolor(0);
+                 OutTextXY(20, 300,'W tym miejscu zanjduje sie juz statek! Jeszcze raz.');
+                 setcolor(15);
+            end;
+
+          if (war2=0) then
+             begin
+                  OutTextXY(20, 300,'Wspolrzedne spoza przedzialu! Jeszcze raz.');
+                  delay(1500);
+
+                  setcolor(0);
+                  OutTextXY(20, 300,'Wspolrzedne spoza przedzialu! Jeszcze raz.');
+                  setcolor(15);
+             end;
+
+          if ((war=1)and(war2=1)) then
+           begin
+                licznik:=licznik+1;
+                 if (licznik<>5) then begin
+                    OutTextXY(20, 300,'OK. Teraz nastepny statek.');
+                    delay(1500);
+                    setcolor(0);
+                    OutTextXY(20, 300,'OK. Teraz nastepny statek.');
+                    setcolor(15);
+                 end;
+           end;
+      if (tryb2=1) then begin rysuj_gracz(); end;
+      if (tryb2=2) then begin rysuj_gracz1(); end;
+    until (licznik=5);
+
+   cleardevice;
+
+  tab_stat_gracz:=0;
+  end;
+/////////////WCZYTUJE POLOZENIE STATKOW GRACZA NR 2 ///////////////////////////////////////////
+function tab_stat_gracz2(): integer;
+  var x_ter,y_ter,licznik,i,dl_stat,x,poziom,pion, poz_x, poz_y,war,war2 : integer;
+      obrot : integer;
+
+  begin
+       rysuj_gracz1();
+       rysuj_gracz2();
+       war:=1;
+       war2:=1;
+       licznik:=1;
+       repeat
+             if ((war=1) and (war2=1)) then
+             begin
+                  case licznik of
+                    1: dl_stat:=2;
+                    2: dl_stat:=3;
+                    3: dl_stat:=3;
+                    4: dl_stat:=4;
+             end;
+
+
+       poziom:=10;
+       pion:=20;
+
+
+       x:=poziom;
+       repeat
+//
+             cleardevice;
+
+              plansza_gracza(tryb2);
+              plansza_kompa(tryb2);
+              rysuj_gracz2();
+              rysuj_gracz1();
+
+              OutTextXY(20, 300,'Aby obrocic statek wcisnij 1. Aby przejsc do wyboru pola wcisnij 2.');
+              rectangle(18, 333, 150, 390);
+              OutTextXY(20, 335,'Polozenie statku');
+
+              if (x=poziom) then
+              begin
+
+                   if (dl_stat=2) then
+                      begin
+                      OutTextXY(20, 350,'[][]');
+                      end
+
+                   else if(dl_stat=3) then
+                      begin
+                      OutTextXY(20, 350,'[][][]');
+                      end
+
+                   else if (dl_stat=4) then
+                      begin
+                      OutTextXY(20, 350,'[][][][]');
+                       end;
+              end;
+
+              if (x=pion) then begin
+
+                   if (dl_stat=2) then
+                      begin
+                      OutTextXY(20, 350,'[]');
+                      OutTextXY(20, 360,'[]');
+                      end
+                   else if(dl_stat=3) then
+                        begin
+                        OutTextXY(20, 350,'[]');
+                        OutTextXY(20, 360,'[]');
+                        OutTextXY(20, 370,'[]');
+                        end
+                   else if (dl_stat=4) then
+                        begin
+                        OutTextXY(20, 350,'[]');
+                        OutTextXY(20, 360,'[]');
+                        OutTextXY(20, 370,'[]');
+                        OutTextXY(20, 380,'[]');
+                        end;
+              end;
+
+///
+          read(obrot);
+
+          if (obrot=1) then
+          begin
+               if (x=poziom) then
+                  begin
+                   x:=pion;
+                  end
+
+               else begin x:=poziom; end;
+          end;
+
+          until (obrot=2);
+          setcolor(0);
+          OutTextXY(20, 300,'Aby obrocic statek wcisnij 1. Aby przejsc do wyboru pola wcisnij 2.');
+          setcolor(15);
+
+      end;
+          OutTextXY(20, 300,'Podaj nr wiersza w ktorym umieszczony bedzie lewy gorny kraniec statku (np. 4):  ');
+          read(poz_y);
+
+
+          setcolor(0);
+          OutTextXY(20, 300,'Podaj nr wiersza w ktorym umieszczony bedzie lewy gorny kraniec statku (np. 4):  ');
+          setcolor(15);
+          OutTextXY(20, 300,'Podaj nr kolumny w ktorym umieszczony bedzie lewy gorny kraniec statku (np. 7):  ');
+          read(poz_x);
+
+
+          setcolor(0);
+          OutTextXY(20, 300,'Podaj nr kolumny w ktorym umieszczony bedzie lewy gorny kraniec statku (np. 7):  ');
+          setcolor(15);
+          rysuj_gracz2();
+
+
+          war:=1;
+          war2:=1;
+          if (x=poziom) then
+             begin
+               if(((poz_x+dl_stat-1)<16) and (poz_x>0) and (poz_y>0) and (poz_y<16)) then
+                 begin
+
+                 begin
+                      x_ter:=poz_x-1;
+                      y_ter:=poz_y-1;
+                            for j:=1 to 3 do begin
+                                 for i:=0 to (dl_stat+2) do begin
+                                   if (tab3[y_ter][x_ter]=1) then begin x_ter:=x_ter+1; end
+                                   else begin war:=0; end;
+                                 end;
+                             x_ter:=poz_x-1;
+                             y_ter:=y_ter+1;
+                            end;
+                      x_ter:=0;
+                      y_ter:=0;
+                 end;
+
+                  if (war=1) then begin
+
+                  for i:=0 to (dl_stat-1) do
+                      begin
+                             tab3[poz_y][poz_x]:=2;
+                             poz_x:=poz_x+1;
+                      end;
+                  end;
+                end
+
+                 else war2:=0;
+           end
+           else if (x=pion) then begin
+                if(((poz_y+dl_stat-1)<16) and (poz_y>0) and (poz_x>0) and (poz_x<16)) then
+                   begin
+                      begin
+                           x_ter:=poz_x-1;
+                           y_ter:=poz_y-1;
+
+                           for j:=1 to 3 do begin
+                               for i:=0 to dl_stat+2 do  begin
+                                 if (tab3[y_ter][x_ter]=1) then
+                                 begin
+                                  y_ter:=y_ter+1;
+                                 end
+                                 else begin war:=0; end;
+                               end;
+                             y_ter:=poz_y-1;
+                             x_ter:=x_ter+1;
+                           end;
+                           y_ter:=0;
+                           x_ter:=0;
+                      end;
+
+                      if(war=1) then begin
+
+                         for i:=0 to dl_stat-1 do begin
+                           tab3[poz_y][poz_x]:=2;
+                           poz_y:=poz_y+1;
+                         end;
+                      end;
+                end
+           else war2:=0;
+           end;
+
+          if (war=0) then
+            begin
+                 OutTextXY(20, 300,'W tym miejscu zanjduje sie juz statek! Jeszcze raz.');
+                 delay(1500);
+
+                 setcolor(0);
+                 OutTextXY(20, 300,'W tym miejscu zanjduje sie juz statek! Jeszcze raz.');
+                 setcolor(15);
+            end;
+
+          if (war2=0) then
+             begin
+                  OutTextXY(20, 300,'Wspolrzedne spoza przedzialu! Jeszcze raz.');
+                  delay(1500);
+
+                  setcolor(0);
+                  OutTextXY(20, 300,'Wspolrzedne spoza przedzialu! Jeszcze raz.');
+                  setcolor(15);
+             end;
+
+          if ((war=1)and(war2=1)) then
+           begin
+                licznik:=licznik+1;
+                 if (licznik<>5) then begin
+                    OutTextXY(20, 300,'OK. Teraz nastepny statek.');
+                    delay(1500);
+                    setcolor(0);
+                    OutTextXY(20, 300,'OK. Teraz nastepny statek.');
+                    setcolor(15);
+                 end;
+           end;
+      rysuj_gracz2();
+    until (licznik=5);
+
+   cleardevice;
+
+  tab_stat_gracz2:=0;
+  end;
+/////////////////////ROZMIESZCZA STATKI KOMPUTERA (automatycznie) ////////////////////////
+function tab_stat_komp(): integer;
+  var x_ter, y_ter,los,licznik,i,dl_stat,x,poziom,pion, poz_x, poz_y,war,war2 : integer;
+
+      begin
+           war:=1;
+           war2:=1;
+           licznik:=1;
+           repeat
+                 if ((war=1) and (war2=1)) then begin
+                    case licznik of
+                      1: dl_stat:=2;
+                      2: dl_stat:=3;
+                      3: dl_stat:=3;
+                      4: dl_stat:=4;
+                    end;
+
+
+                    poziom:=10;
+                    pion:=20;
+                    randomize;
+                    los:=random(2);
+
+
+                    if (los=0) then begin x:=poziom; end;
+                    if (los=1) then begin x:=pion; end;
+                 end;
+
+                 poz_y:=1+random(15);
+
+                 poz_x:=1+random(15);
+
+                 war:=1;
+                 war2:=1;
+                 if (x=poziom) then
+                  begin
+                       if(((poz_x+dl_stat-1)<16) and (poz_x>0) and (poz_y>0) and (poz_y<16)) then
+                        begin
+                             x_ter:=poz_x-1;
+                             y_ter:=poz_y-1;
+                             begin
+                                  for j:=1 to 3 do begin
+                                      for i:=0 to (dl_stat+2) do begin
+                                          if (tab2[y_ter][x_ter]=1) then begin x_ter:=x_ter+1; end
+                                          else begin war:=0; end;
+                                      end;
+                                      x_ter:=poz_x-1;
+                                      y_ter:=y_ter+1;
+                                  end;
+                                  x_ter:=0;
+                                  y_ter:=0;
+                             end;
+
+
+                             if (war=1) then begin
+
+                             for i:=0 to (dl_stat-1) do
+                                 begin
+                                      tab2[poz_y][poz_x]:=2;
+                                      poz_x:=poz_x+1;
+                                 end;
+                             end;
+                        end
+
+                       else begin war2:=0;  end;
+                  end
+                 else if (x=pion) then begin
+                 if(((poz_y+dl_stat-1)<16) and (poz_y>0) and (poz_x>0) and (poz_x<16)) then
+    begin
+         begin
+          x_ter:=poz_x-1;
+          y_ter:=poz_y-1;
+          for j:=1 to 3 do begin
+              for i:=0 to dl_stat+2 do
+                begin  if (tab2[y_ter][x_ter]=1) then
+                 begin
+                      y_ter:=y_ter+1;
+                 end
+                else begin war:=0; end;
+                end;
+              y_ter:=poz_y-1;
+              x_ter:=x_ter+1;
+          end;
+          y_ter:=0;
+          x_ter:=0;
+         end;
+
+        if(war=1) then begin
+
+        for i:=0 to dl_stat-1 do
+            begin
+                 tab2[poz_y][poz_x]:=2;
+                 poz_y:=poz_y+1;
+            end;
+        end;
+    end
+   else begin war2:=0; end;
+   end;
+   rysuj_komp();
+   if ((war=1) and (war2=1)) then begin licznik:=licznik+1; end;
+  until (licznik=5);
+
+  tab_stat_komp:=0;
+ end;
+/////////////////////STRZAL GRACZA///////////////////////////////
+      function strzal_gracz(var wygral: integer;var  licz_stat_kompa: integer) : integer;
+      var wsp_y, wsp_x,war3, war_wygr : integer;
+
+      begin
+           war_wygr:=0;
+           war3:=1;
+           setcolor(15);
+           OutTextXY(20, 300,'Twoja kolej.');
+           delay(500);
+           setcolor(0);
+           OutTextXY(20, 300,'Twoja kolej.');
+
+           repeat
+                 war3:=1;
+
+                 repeat
+                       repeat
+
+                             setcolor(15);
+                             OutTextXY(20, 300,'Podaj nr wiersza: ');
+                             read(wsp_y);
+                             setcolor(0);
+                             OutTextXY(20, 300,'Podaj nr wiersza: ');
+                             if((wsp_y<0)or(wsp_y>15)) then
+                             begin
+                                  setcolor(15);
+                                  OutTextXY(20, 300,'Wyszedles poza plansze. Jeszcze raz.');
+                                  delay(1500);
+                                  setcolor(0);
+                                  OutTextXY(20, 300,'Wyszedles poza plansze. Jeszcze raz.');
+                             end;
+                       until ((wsp_y>0)and(wsp_y<16));
+
+                       setcolor(15);
+                       OutTextXY(20, 300,'Podaj nr kolumny: ');
+                       read(wsp_x);
+                       setcolor(0);
+                       OutTextXY(20, 300,'Podaj nr kolumny: ');
+                       if ((wsp_x<0)or(wsp_x>15)) then
+                       begin
+                            setcolor(15);
+                            OutTextXY(20, 300,'Wyszedles poza plansze. Jeszcze raz.');
+                            delay(1500);
+                            setcolor(0);
+                            OutTextXY(20, 300,'Wyszedles poza plansze. Jeszcze raz.');
+                       end;
+                 until ((wsp_x>0)and(wsp_x<16));
+
+                 if(tab2[wsp_y][wsp_x]=2) then
+                 begin
+                      tab2[wsp_y][wsp_x]:=3;
+                      licz_stat_kompa:=licz_stat_kompa+1;
+                      if (licz_stat_kompa=liczba_wszystkich_stat) then
+                      begin
+                           wygral:=gracz;
+                           war_wygr:=1;
+                      end;
+                    rysuj_komp();
+                    if (war_wygr=0) then begin
+                       setcolor(15);
+                       OutTextXY(20, 300,'TRAFIONY! Nastepny strzal.');
+                       delay(1000);
+                       setcolor(0);
+                       OutTextXY(20, 300,'TRAFIONY! Nastepny strzal.');
+                       war3:=0;
+                    end;
+                 end;
+                 if (war_wygr=0) then begin
+                    if ((war3=1)and((tab2[wsp_y][wsp_x]=3)or(tab2[wsp_y][wsp_x]=4))) then
+                    begin
+                      setcolor(15);
+                      OutTextXY(20, 300,'To pole juz zostalo przez Ciebie trafione.');
+                      OutTextXY(20, 310,'Wybierz inne wspolrzedne.');
+                      delay(1500);
+                      setcolor(0);
+                      OutTextXY(20, 300,'To pole juz zostalo przez Ciebie trafione.');
+                      OutTextXY(20, 310,'Wybierz inne wspolrzedne.');
+                    end;
+                 end;
+
+           until (((war3=1)and(tab2[wsp_y][wsp_x]=1))or(war_wygr=1));
+           if (war_wygr=0) then begin
+                if(tab2[wsp_y][wsp_x]=1) then
+                     begin
+                          tab2[wsp_y][wsp_x]:=4;
+                          rysuj_komp();
+                          setcolor(15);
+                          OutTextXY(20, 300,'PUDLO! kolej na przeciwnika.');
+                          setcolor(0);
+                          delay(1000);
+                          OutTextXY(20, 300,'PUDLO! kolej na przeciwnika.');
+                     end;
+           end;
+           setcolor(15);
+       strzal_gracz:= 0;
+    end;
+///////////////////STRZAL GRACZA 1 ///////////////////////////////////////////////////////////////////
+function strzal_gracz1(var wygral: integer;var  licz_stat_gracza2: integer) : integer;
+      var wsp_y, wsp_x,war3, war_wygr : integer;
+
+      begin
+           war_wygr:=0;
+           war3:=1;
+           setcolor(15);
+           OutTextXY(20, 300,'KOLEJ GRACZA NR 1.');
+           delay(500);
+           setcolor(0);
+           OutTextXY(20, 300,'KOLEJ GRACZA NR 1.');
+
+           repeat
+                 war3:=1;
+
+                 repeat
+                       repeat
+
+                             setcolor(15);
+                             OutTextXY(20, 300,'Podaj nr wiersza: ');
+                             read(wsp_y);
+                             setcolor(0);
+                             OutTextXY(20, 300,'Podaj nr wiersza: ');
+                             if((wsp_y<0)or(wsp_y>15)) then
+                             begin
+                                  setcolor(15);
+                                  OutTextXY(20, 300,'Wyszedles poza plansze. Jeszcze raz.');
+                                  delay(1500);
+                                  setcolor(0);
+                                  OutTextXY(20, 300,'Wyszedles poza plansze. Jeszcze raz.');
+                             end;
+                       until ((wsp_y>0)and(wsp_y<16));
+
+                       setcolor(15);
+                       OutTextXY(20, 300,'Podaj nr kolumny: ');
+                       read(wsp_x);
+                       setcolor(0);
+                       OutTextXY(20, 300,'Podaj nr kolumny: ');
+                       if ((wsp_x<0)or(wsp_x>15)) then
+                       begin
+                            setcolor(15);
+                            OutTextXY(20, 300,'Wyszedles poza plansze. Jeszcze raz.');
+                            delay(1500);
+                            setcolor(0);
+                            OutTextXY(20, 300,'Wyszedles poza plansze. Jeszcze raz.');
+                       end;
+                 until ((wsp_x>0)and(wsp_x<16));
+
+                 if(tab3[wsp_y][wsp_x]=2) then
+                 begin
+                      tab3[wsp_y][wsp_x]:=3;
+                      licz_stat_gracza2:=licz_stat_gracza2+1;
+                      if (licz_stat_gracza2=liczba_wszystkich_stat) then
+                      begin
+                           wygral:=gracz1;
+                           war_wygr:=1;
+                      end;
+                    rysuj_gracz2();
+                    if (war_wygr=0) then begin
+                       setcolor(15);
+                       OutTextXY(20, 300,'TRAFIONY! Nastepny strzal.');
+                       delay(1000);
+                       setcolor(0);
+                       OutTextXY(20, 300,'TRAFIONY! Nastepny strzal.');
+                       war3:=0;
+                    end;
+                 end;
+                 if (war_wygr=0) then begin
+                    if ((war3=1)and((tab3[wsp_y][wsp_x]=3)or(tab3[wsp_y][wsp_x]=4))) then
+                    begin
+                      setcolor(15);
+                      OutTextXY(20, 300,'To pole juz zostalo przez Ciebie trafione.');
+                      OutTextXY(20, 310,'Wybierz inne wspolrzedne.');
+                      delay(1500);
+                      setcolor(0);
+                      OutTextXY(20, 300,'To pole juz zostalo przez Ciebie trafione.');
+                      OutTextXY(20, 310,'Wybierz inne wspolrzedne.');
+                    end;
+                 end;
+
+           until (((war3=1)and(tab3[wsp_y][wsp_x]=1))or(war_wygr=1));
+           if (war_wygr=0) then begin
+                if(tab3[wsp_y][wsp_x]=1) then
+                     begin
+                          tab3[wsp_y][wsp_x]:=4;
+                          rysuj_gracz2();
+                          setcolor(15);
+                          OutTextXY(20, 300,'PUDLO! kolej na przeciwnika.');
+                          setcolor(0);
+                          delay(1000);
+                          OutTextXY(20, 300,'PUDLO! kolej na przeciwnika.');
+                     end;
+           end;
+           setcolor(15);
+       strzal_gracz1:= 0;
+    end;
+///////////////////STRZAL GRACZA 2/////////////////////////////////////////////////////////////////////
+function strzal_gracz2(var wygral: integer;var  licz_stat_gracza1: integer) : integer;
+      var wsp_y, wsp_x,war3, war_wygr : integer;
+
+      begin
+           war_wygr:=0;
+           war3:=1;
+           setcolor(15);
+           OutTextXY(20, 300,'KOLEJ GRACZA NR 2.');
+           delay(500);
+           setcolor(0);
+           OutTextXY(20, 300,'KOLEJ GRACZA NR 2.');
+
+           repeat
+                 war3:=1;
+
+                 repeat
+                       repeat
+
+                             setcolor(15);
+                             OutTextXY(20, 300,'Podaj nr wiersza: ');
+                             read(wsp_y);
+                             setcolor(0);
+                             OutTextXY(20, 300,'Podaj nr wiersza: ');
+                             if((wsp_y<0)or(wsp_y>15)) then
+                             begin
+                                  setcolor(15);
+                                  OutTextXY(20, 300,'Wyszedles poza plansze. Jeszcze raz.');
+                                  delay(1500);
+                                  setcolor(0);
+                                  OutTextXY(20, 300,'Wyszedles poza plansze. Jeszcze raz.');
+                             end;
+                       until ((wsp_y>0)and(wsp_y<16));
+
+                       setcolor(15);
+                       OutTextXY(20, 300,'Podaj nr kolumny: ');
+                       read(wsp_x);
+                       setcolor(0);
+                       OutTextXY(20, 300,'Podaj nr kolumny: ');
+                       if ((wsp_x<0)or(wsp_x>15)) then
+                       begin
+                            setcolor(15);
+                            OutTextXY(20, 300,'Wyszedles poza plansze. Jeszcze raz.');
+                            delay(1500);
+                            setcolor(0);
+                            OutTextXY(20, 300,'Wyszedles poza plansze. Jeszcze raz.');
+                       end;
+                 until ((wsp_x>0)and(wsp_x<16));
+
+                 if(tab1[wsp_y][wsp_x]=2) then
+                 begin
+                      tab1[wsp_y][wsp_x]:=3;
+                      licz_stat_gracza1:=licz_stat_gracza1+1;
+                      if (licz_stat_gracza1=liczba_wszystkich_stat) then
+                      begin
+                           wygral:=gracz2;
+                           war_wygr:=1;
+                      end;
+                    rysuj_gracz1();
+                    if (war_wygr=0) then begin
+                       setcolor(15);
+                       OutTextXY(20, 300,'TRAFIONY! Nastepny strzal.');
+                       delay(1000);
+                       setcolor(0);
+                       OutTextXY(20, 300,'TRAFIONY! Nastepny strzal.');
+                       war3:=0;
+                    end;
+                 end;
+                 if (war_wygr=0) then begin
+                    if ((war3=1)and((tab1[wsp_y][wsp_x]=3)or(tab1[wsp_y][wsp_x]=4))) then
+                    begin
+                      setcolor(15);
+                      OutTextXY(20, 300,'To pole juz zostalo przez Ciebie trafione.');
+                      OutTextXY(20, 310,'Wybierz inne wspolrzedne.');
+                      delay(1500);
+                      setcolor(0);
+                      OutTextXY(20, 300,'To pole juz zostalo przez Ciebie trafione.');
+                      OutTextXY(20, 310,'Wybierz inne wspolrzedne.');
+                    end;
+                 end;
+
+           until (((war3=1)and(tab1[wsp_y][wsp_x]=1))or(war_wygr=1));
+           if (war_wygr=0) then begin
+                if(tab1[wsp_y][wsp_x]=1) then
+                     begin
+                          tab1[wsp_y][wsp_x]:=4;
+                          rysuj_gracz1();
+                          setcolor(15);
+                          OutTextXY(20, 300,'PUDLO! kolej na przeciwnika.');
+                          setcolor(0);
+                          delay(1000);
+                          OutTextXY(20, 300,'PUDLO! kolej na przeciwnika.');
+                     end;
+           end;
+           setcolor(15);
+       strzal_gracz2:= 0;
+    end;
+//////////////////funkcja pomocnicza///////////////////////////////////////////////////
+
+    function komp_mysli() : integer;
+    begin
+
+        setcolor(15);
+        OutTextXY(20, 300,'Mysle...');
+        delay(500);
+        setcolor(0);
+        OutTextXY(20, 300,'Mysle...');
+        komp_mysli:= 0;
+        setcolor(15);
+
+      komp_mysli:=0;
+    end;
+//////////////////funkcja pomocnicza//////////////////////////////
+    function komp_trafil() : integer;
+    begin
+         setcolor(15);
+         OutTextXY(20, 300,'TRAFIONY!');
+         setcolor(0);
+         delay(3000);
+         OutTextXY(20, 300,'TRAFIONY!');
+         setcolor(15);
+
+       komp_trafil:=0;
+    end;
+//////////////funkcja pomoznicza///////////////////////////////////
+    function komp_pudlo() : integer;
+    begin
+         setcolor(15);
+         OutTextXY(20, 300,'PUDLO!');
+         setcolor(0);
+         delay(1000);
+         OutTextXY(20, 300,'PUDLO!');
+         setcolor(15);
+
+       komp_pudlo:=0;
+    end;
+
+
+//////////////GDY KOMPUTER TRAFI W STATEK/////////////////////////////////////////////////////////////////////////
+
+    function trafil(wsp_y: integer; wsp_x: integer;var wygral : integer; var pola: integer;var  licz_stat_gracza: integer): integer;
+    var komputer: integer;
+    begin
+         komputer:=100;
+         tab1[wsp_y][wsp_x]:=3;
+         komp_mysli();
+         rysuj_gracz();
+         komp_trafil();
+
+         pola:=pola+1;
+         licz_stat_gracza:=licz_stat_gracza+1;
+         if (licz_stat_gracza=liczba_wszystkich_stat) then begin wygral:=komputer; end;
+       trafil:=0;
+    end;
+/////////////////GDY KOMPUTER NIE TRAFI W STATEK////////////////////////////////////////////////
+    function pudlo(wsp_y: integer; wsp_x: integer): integer;
+    begin
+         tab1[wsp_y][wsp_x]:=4;
+         komp_mysli();
+         rysuj_gracz();
+         komp_pudlo();
+
+       pudlo:=0;
+    end;
+/////////////////STRZELA DALEJ W TYM KIERUNKU/////////////////////////////////////////////////////
+    function idz_dalej_w_tym_kier(kier: integer; var wsp_y: integer; var wsp_x: integer): integer;
+    begin
+         case kier of
+              0: wsp_y:=wsp_y+1;
+              1: wsp_y:=wsp_y-1;
+              2: wsp_x:=wsp_x+1;
+              3: wsp_x:=wsp_x-1;
+
+         end;
+         idz_dalej_w_tym_kier:=0;
+    end;
+
+
+///////////////ODWRACA KIERUNEK////////////////////////////////////////////////////////////////////
+    function idzie_w_przeciwna_strone(var kier: integer):integer;
+    begin
+         if (kier=0) then
+              begin
+                     kier:=1;
+              end
+         else if (kier=1) then
+              begin
+                   kier:=0;
+              end
+         else if (kier=2) then
+              begin
+                   kier:=3;
+              end
+         else if (kier=3) then
+              begin
+                   kier:=2;
+              end;
+
+         idzie_w_przeciwna_strone:=0;
+    end;
+///////////////COFA SIE O JEDNO POLE BEZ ZMIANY KIERUNKU////////////////////////////////////////
+    function cofnij(kier: integer; var wsp_y: integer; var wsp_x: integer): integer;
+    begin
+
+         case kier of
+              0: wsp_y:=wsp_y-1;
+              1: wsp_y:=wsp_y+1;
+              2: wsp_x:=wsp_x-1;
+              3: wsp_x:=wsp_x+1;
+         end;
+       cofnij:=0;
+    end;
+//////////////////ZMIENIA KIERUNEK NA JEDEN Z DWOCH POZOSTALYCH///////////////////////////////////
+    function dwa_pozostale_kierunki(var kier: integer): integer;
+    begin
+         if ((kier=0)or(kier=1)) then
+              begin
+                 kier:=2+random(2);
+              end;
+         if ((kier=2)or(kier=3)) then begin
+            kier:=random(2);
+         end;
+        dwa_pozostale_kierunki:=0;
+    end;
+///////////////W NASTEPNEJ TURZE ZACZNIE STRZELAC OD TEGO PUNKTU/////////////////////////////
+    function ten_sam_punkt(wsp_x: integer; wsp_y: integer; kier: integer; var tsp_x: integer; var tsp_y: integer; var tsp_k: integer): integer;
+
+    begin
+         tsp_x:=wsp_x;
+         tsp_y:=wsp_y;
+         tsp_k:=kier;
+         ten_sam_punkt:=11;
+    end;
+
+///////////////CIAG DALSZY (strzela komputer)//////////////////////////////////
+    function ciag_dalszy(var wygral: integer;wsp_y:integer; wsp_x : integer; kier: integer; var zacznij_od_gory: integer):integer;
+    begin
+         if((wsp_x<0)or(wsp_x>15)or(wsp_y<0)or(wsp_y>15)) then
+           begin
+                idzie_w_przeciwna_strone(kier);
+                idz_dalej_w_tym_kier(kier, wsp_y, wsp_x);
+                idz_dalej_w_tym_kier(kier, wsp_y, wsp_x);
+
+                if (tab1[wsp_y][wsp_x]=2) then
+                   begin
+                        repeat
+                              trafil(wsp_y, wsp_x,wygral, pola,licz_stat_gracza);
+                              if (wygral=komputer) then begin ciag_dalszy:=55; end;
+                              idz_dalej_w_tym_kier(kier, wsp_y, wsp_x);
+                        until ((tab1[wsp_y][wsp_x]=1)or(tab1[wsp_y][wsp_x]=4));
+                        pola:=0;
+                        if (tab1[wsp_y][wsp_x]=4) then
+                        begin
+                             zacznij_od_gory:=1;    ////<-------------zacznij od samego poczatku, kolejka nadal nalezy do kompa
+                        end;
+                   end;
+           end
+           else if (tab1[wsp_y][wsp_x]=1) then
+           begin
+                idzie_w_przeciwna_strone(kier);
+                ten_sam_punkt(wsp_x,wsp_y,kier,tsp_x,tsp_y,tsp_k);//<-------w nastepnej turze wroc tutaj i szukaj w jedynym dostepnym kierunku az cos innego sie stanie
+           end
+           else if (tab1[wsp_y][wsp_x]=4) then
+           begin
+                idzie_w_przeciwna_strone(kier);
+                idz_dalej_w_tym_kier(kier, wsp_y, wsp_x);
+             repeat
+                 idz_dalej_w_tym_kier(kier, wsp_y, wsp_x);         //<--zacznij od poczatku, kolejka nadal kompa
+                 if (tab1[wsp_y][wsp_x]=2) then
+                    begin
+                         trafil(wsp_y, wsp_x,wygral, pola,licz_stat_gracza);
+                         if (wygral=komputer) then begin ciag_dalszy:=55; end;
+                    end;
+
+             until (tab1[wsp_y][wsp_x]<>2);
+           end
+           else if (tab1[wsp_y][wsp_x]=2) then
+             begin
+                  licz_cofniecia:=0;
+                  repeat
+                        trafil(wsp_y, wsp_x,wygral, pola, licz_stat_gracza);
+                        if (wygral=komputer) then begin ciag_dalszy:=55; end;
+                        idz_dalej_w_tym_kier(kier, wsp_y, wsp_x);
+                        licz_cofniecia:=licz_cofniecia+1;
+                  until ((tab1[wsp_y][wsp_x]=1)or(tab1[wsp_y][wsp_x]=4));
+                  if (tab1[wsp_y][wsp_x]=1) then                                              //<<...............?
+                     begin
+                          repeat
+                                 cofnij(kier, wsp_y, wsp_x);
+                                 licz_cofniecia:=licz_cofniecia-1;
+                          until (licz_cofniecia=0);
+                          idzie_w_przeciwna_strone(kier);
+                          ten_sam_punkt(wsp_x,wsp_y,kier,tsp_x,tsp_y,tsp_k);
+                     end;
+
+
+
+                  if (tab1[wsp_y][wsp_x]=4) then
+                     begin
+                          repeat
+                                cofnij(kier, wsp_y, wsp_x);
+                                licz_cofniecia:=licz_cofniecia-1;
+                          until (licz_cofniecia=0);
+                          zacznij_od_gory:=1;
+                     end;
+
+             end;
+             if (tab1[wsp_y][wsp_x]=1) then begin ciag_dalszy:=1; end;
+             if (tab1[wsp_y][wsp_x]=4) then begin ciag_dalszy:=4; end;
+
+    end;
+
+
+
+
+
+
+///////////////PRZEBIEG STRZELANIA KOMPUTERA/////////////////////////////////////////////
+    function strzaly_kom(var tsp_x: integer; var tsp_y: integer; var tsp_k: integer; var wygral: integer; var pola: integer;var  licz_stat_gracza: integer): integer;
+    var warun, war9, ss: integer;
+    begin
+         warun:=1;
+         war9:=1;
+         if (wygral=gracz) then begin strzaly_kom:=55; end;
+         repeat
+               repeat
+
+                    if (tsp_x=0) then begin
+
+                    randomize();
+                    wsp_y:=1+random(15);
+                    wsp_x:=1+random(15);
+
+                    end;
+
+                    war_pola:=1;
+
+                    zacznij_od_gory:=0;
+
+                    if ((tab1[wsp_y][wsp_x]=2)or(tsp_x>0)) then
+                    begin
+                         if (tsp_x=0) then begin
+                            x_base:=wsp_x;
+                            y_base:=wsp_y;
+                            trafil(wsp_y, wsp_x,wygral, pola, licz_stat_gracza);
+                            if (wygral=komputer) then begin strzaly_kom:=55; end;
+
+                         end;
+
+                         if (tsp_x>0) then begin wsp_x:=tsp_x; wsp_y:=tsp_y; tsp_x:=0; end;
+
+                         kier:=random(4);
+                         idz_dalej_w_tym_kier(kier, wsp_y, wsp_x);
+
+                         if((wsp_x<0)or(wsp_x>15)or(wsp_y<0)or(wsp_y>15))  then
+                            begin
+                                 wsp_x:=x_base;
+                                 wsp_y:=y_base;
+                                 idzie_w_przeciwna_strone(kier);
+                                 idz_dalej_w_tym_kier(kier, wsp_y, wsp_x);
+
+                                 if (tab1[wsp_y][wsp_x]=1) then
+                                    begin
+                                          war9:=0;
+                                          pudlo(wsp_y, wsp_x);
+
+                                          wsp_x:=x_base;
+                                          wsp_y:=y_base;                               //.,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+
+                                          ten_sam_punkt(wsp_x,wsp_y,kier, tsp_x, tsp_y, tsp_k);
+                                          war_pola:=0;
+
+                                     end
+                                 else if (tab1[wsp_y][wsp_x]=2) then
+                                      begin
+                                           repeat
+                                                 trafil(wsp_y, wsp_x,wygral, pola, licz_stat_gracza);
+                                                 if (wygral=komputer) then begin strzaly_kom:=55; end;
+                                                 idz_dalej_w_tym_kier(kier, wsp_y, wsp_x);
+                                           until ((tab1[wsp_y][wsp_x]=1)or(tab1[wsp_y][wsp_x]=4));
+                                           if (tab1[wsp_y][wsp_x]=1) then
+                                              begin
+                                                   cofnij(kier, wsp_y, wsp_x);
+                                                   x_base:=wsp_x;
+                                                   y_base:=wsp_y;
+                                                   ten_sam_punkt(wsp_x,wsp_y,kier, tsp_x, tsp_y, tsp_k);    //<<--oddanie tury graczowi
+                                                   pola:=0;
+                                                   zacznij_od_gory:=0;
+                                              end
+                                           else if (tab1[wsp_y][wsp_x]=4) then
+                                                begin
+                                                     zacznij_od_gory:=1;
+                                                     war_pola:=0;          //<<--powrot do samej gory i dalej tura kompa
+                                                end;
+                                      end
+                                 else if ((tab1[wsp_y][wsp_x]=4)or(tab1[wsp_y][wsp_x]=3) ) then
+                                      begin
+                                           cofnij(kier, wsp_y, wsp_x);
+                                           dwa_pozostale_kierunki(kier);
+                                           idz_dalej_w_tym_kier(kier, wsp_y, wsp_x);
+                                           ss:=ciag_dalszy(wygral,wsp_y, wsp_x, kier, zacznij_od_gory);
+                                           if (wygral=komputer) then begin strzaly_kom:=55; end;
+                                           if (ss=1) then begin tab1[wsp_y][wsp_x]:=1 end;
+                                           if (ss=4) then begin tab1[wsp_y][wsp_x]:=4 end;
+                                           if (ss=55) then begin strzaly_kom:=55; end;
+                                      end;
+                            end
+                         else if (tab1[wsp_y][wsp_x]=2) then
+                              begin
+
+                                   licznik_cofniec:=0;
+
+                                   repeat
+                                         trafil(wsp_y, wsp_x,wygral, pola, licz_stat_gracza);
+                                         if (wygral=komputer) then begin strzaly_kom:=55; end;
+                                         idz_dalej_w_tym_kier(kier, wsp_y, wsp_x);
+                                         licznik_cofniec:=licznik_cofniec+1;
+
+                                   until ((tab1[wsp_y][wsp_x]=1)or(tab1[wsp_y][wsp_x]=4)or(wsp_x<0)or(wsp_x>15)or(wsp_y<0)or(wsp_y>15)or(tab1[wsp_y][wsp_x]=3));
+
+                                   if ((wsp_x<0)or(wsp_x>15)or(wsp_y<0)or(wsp_y>15)or(tab1[wsp_y][wsp_x]=4)or(tab1[wsp_y][wsp_x]=3))  then
+                                      begin
+
+
+                                           repeat
+                                                 cofnij(kier, wsp_y, wsp_x);
+                                                 licznik_cofniec:=licznik_cofniec-1;
+                                           until (licznik_cofniec=0);
+
+                                      end;
+                                   if (tab1[wsp_y][wsp_x]=1) then
+                                      begin
+                                           pudlo(wsp_y, wsp_x);
+                                           war9:=0;
+                                           warun:=0;
+                                           pola:=pola+1;
+                                           zacznij_od_gory:=0;
+                                           repeat
+                                                 cofnij(kier, wsp_y, wsp_x);
+                                                 licznik_cofniec:=licznik_cofniec-1;
+                                           until (licznik_cofniec=0);
+                                           idzie_w_przeciwna_strone(kier);
+                                           ten_sam_punkt(wsp_x,wsp_y,kier, tsp_x, tsp_y, tsp_k);
+                                      end
+                                   else if ((tab1[wsp_y][wsp_x]=4)or(tab1[wsp_y][wsp_x]=3)) then
+                                        begin
+                                             idzie_w_przeciwna_strone(kier);
+
+                                             idz_dalej_w_tym_kier(kier, wsp_y, wsp_x);
+                                             if (tab1[wsp_y][wsp_x]=2) then
+                                                begin
+                                                     repeat
+                                                           trafil(wsp_y, wsp_x,wygral, pola, licz_stat_gracza);
+                                                           if (wygral=komputer) then begin strzaly_kom:=55; end;
+                                                           idz_dalej_w_tym_kier(kier, wsp_y, wsp_x);
+                                                     until ((tab1[wsp_y][wsp_x]=1)or(tab1[wsp_y][wsp_x]=4)or(wsp_x<0)or(wsp_x>15)or(wsp_y<0)or(wsp_y>15));
+                                                     if (tab1[wsp_y][wsp_x]=1) then begin pudlo(wsp_y, wsp_x); war9:=0; end;
+                                                     ten_sam_punkt(wsp_x,wsp_y,kier, tsp_x, tsp_y, tsp_k);
+                                                                                     //////<------------oddanie tury graczowi
+                                                end;
+
+                                             if ((tab1[wsp_y][wsp_x]=4)or(wsp_x<0)or(wsp_x>15)or(wsp_y<0)or(wsp_y>15)) then
+                                                begin
+                                                     zacznij_od_gory:=1;
+                                                end;
+
+                                        end;
+                                   end
+
+                                   else if (tab1[wsp_y][wsp_x]=1) then
+                                        begin
+                                             pudlo(wsp_y, wsp_x);
+                                             war9:=0;
+                                             cofnij(kier, wsp_y, wsp_x);
+                                             idzie_w_przeciwna_strone(kier);
+                                             pola:=pola+1;
+                                             zacznij_od_gory:=0;
+                                             ten_sam_punkt(wsp_x,wsp_y,kier, tsp_x, tsp_y, tsp_k);
+                                                                             ///<-----Oddanie tury graczowi
+                                        end
+                                   else if (tab1[wsp_y][wsp_x]=4) then
+                                     begin
+                                          cofnij(kier, wsp_y, wsp_x);
+                                          idzie_w_przeciwna_strone(kier);
+                                          ten_sam_punkt(wsp_x,wsp_y,kier, tsp_x, tsp_y, tsp_k);
+                                          zacznij_od_gory:=1;           ///<--zacznij od samej góry (tura nadal nalezy do kompa)
+                                          war_pola:=0;
+                                     end;
+
+
+                              end;
+                              if (war_pola=1) then begin pola:=0; end;
+                         until (zacznij_od_gory=0);
+
+                     ///=======================================================================================================
+                         if (licz_stat_gracza=liczba_wszystkich_stat) then
+                            begin
+
+                                 czy_strzela:=0;
+                                 wygral:=komputer;
+                            end;
+
+                         if ((war9=1)and((tab1[wsp_y][wsp_x]=3)or(tab1[wsp_y][wsp_x]=4))and(warun=1)) then
+                            begin
+                                 czy_strzela:=1;
+                            end;
+
+                         if (tab1[wsp_y][wsp_x]=1) then
+                            begin
+
+                                 komp_mysli();
+                                 tab1[wsp_y][wsp_x]:=4;
+                                 rysuj_gracz();
+                                 komp_pudlo();
+                                 czy_strzela:=0;
+
+                            end;
+
+
+
+
+              until (czy_strzela=0);
+
+
+       strzaly_kom:=0;
+    end;
+///////////KONIEC DEFINICJI FUNKCJI///////////////////////////////////////////////////////////////////
+
+
+///////////POCZATEK PROGRAMU/////////////////////
+   begin
+   ster:=VGA;  tryb:=VGAHi;
+   InitGraph(ster, tryb, 'C:\Documents and Settings\piotslow\Pulpit' );
+
+     cleardevice();
+     loax:=22;
+     setcolor(15);
+     OutTextXY(20, 50,'LOADING...');
+
+     OutTextXY(18, 70,'[');
+     OutTextXY(172, 70,']');
+     setcolor(15);
+     repeat OutTextXY(loax, 70,'|'); delay(100); loax:=loax+2; until(loax=170);
+      OutTextXY(100, 50,'DONE!');
+      delay(2000);
+      repeat
+            repeat
+                  cleardevice();
+                  setcolor(15);
+                  OutTextXY(20, 50,'WYBIERZ TRYB: ');
+                  OutTextXY(20, 80,'1 - CZLOWIEK VS KOMPUTER');
+                  OutTextXY(20, 110,'2 - CZLOWIEK VS CZLOWIEK');
+                  OutTextXY(20, 140,'3 - WYJSCIE');
+
+                  read(tryb2);
+                  if (tryb2=3) then
+                     begin
+                          cleardevice();
+                          OutTextXY(20, 50,'ZAMYKANIE...');
+                          delay(2500);
+                          exit();
+                     end;
+                  setcolor(0);
+                  OutTextXY(20, 50,'WYBIERZ TRYB: ');
+                  OutTextXY(20, 80,'1 - CZLOWIEK VS KOMPUTER');
+                  OutTextXY(20, 110,'2 - CZLOWIEK VS CZLOWIEK');
+                  OutTextXY(20, 140,'3 - WYJSCIE');
+                  setcolor(15);
+            until ((tryb2=1)or(tryb2=2));
+            clrscr();
+//////////////INICJACJA ZMIENNYCH GLOBALNYCH////////////////////////
+            kon:=3;
+            gracz1:=123;
+            gracz2:=456;
+            komputer:=100;
+            gracz:=200;
+            wygral:=1;
+            tsp_x:=0;
+            liczba_wszystkich_stat:=12;
+            licz_stat_gracza:=0;
+            licz_stat_kompa:=0;
+            licz_stat_gracza1:=0;
+            licz_stat_gracza2:=0;
+            tsp_x:=0;
+            pola:=0;
+/////////////INICJALIZACJA TABLIC////////////////
+
+            for i:=0 to 16 do begin
+                for j:=0 to 16 do begin
+                    tab1[i][j]:=1;
+                    tab2[i][j]:=1;
+                    tab3[i][j]:=1;
+                end;
+            end;
+////////////////WLASCIWY PRZEBIEG GRY//////////////////////////////
+            if (tryb2=1) then begin                        //<-------------gracz vs komputer
+            tab_stat_gracz(tryb2);
+            tab_stat_komp();
+
+            plansza_gracza(tryb2);
+            plansza_kompa(tryb2);
+            rysuj_gracz();
+            rysuj_komp();
+
+
+
+            repeat
+
+                  strzal_gracz(wygral,licz_stat_kompa);
+                  if ((wygral<>gracz)and(wygral<>komputer)) then
+                   begin
+                    strzaly_kom(tsp_x, tsp_y, tsp_k, wygral, pola,licz_stat_gracza);
+                   end;
+            until ((wygral=komputer)or(wygral=gracz));
+
+            if (wygral=komputer) then
+            begin
+                 setcolor(15);
+                 OutTextXY(20, 300,'KONIEC! WYGRAL KOMPUTER!');
+                 delay(5000);
+                 setcolor(0);
+                 OutTextXY(20, 300,'KONIEC! WYGRAL KOMPUTER!');
+                 setcolor(15);
+            end;
+
+            if (wygral=gracz) then
+            begin
+                 setcolor(15);
+                 OutTextXY(20, 300,'KONIEC! WYGRAL GRACZ!');
+                 delay(5000);
+                 setcolor(0);
+                 OutTextXY(20, 300,'KONIEC! WYGRAL GRACZ!');
+                 setcolor(15);
+            end;
+
+
+            repeat
+                  setcolor(15);
+                  OutTextXY(20, 300,'JESZCZE RAZ? 0 -ZAKONCZ, 1 -GRAJ DALEJ :  ');
+                  read(kon);
+                  setcolor(0);
+                  OutTextXY(20, 300,'JESZCZE RAZ? 0 -ZAKONCZ, 1 -GRAJ DALEJ :  ');
+                  setcolor(15);
+
+            until ((kon=0)or(kon=1));
+
+            end;
+           ////////////////////////////////////////////////////////
+          if (tryb2=2) then begin                            //<----gracz vs gracz
+
+            setcolor(15);
+            OutTextXY(20, 50,'GRACZU NR 1 WYBIERZ POZYCJE SWOICH STATKOW.');
+            setcolor(0);
+            delay(3000);
+            OutTextXY(20, 50,'GRACZU NR 1 WYBIERZ POZYCJE SWOICH STATKOW.');
+            setcolor(15);
+            tab_stat_gracz(tryb2);
+            OutTextXY(20, 50,'GRACZU NR 2 WYBIERZ POZYCJE SWOICH STATKOW.');
+            setcolor(0);
+            delay(3000);
+            OutTextXY(20, 50,'GRACZU NR 2 WYBIERZ POZYCJE SWOICH STATKOW.');
+            setcolor(15);
+            tab_stat_gracz2();
+
+            plansza_gracza(tryb2);
+            plansza_kompa(tryb2);
+            rysuj_gracz1();
+            rysuj_gracz2();
+
+
+
+            repeat
+
+                  strzal_gracz1(wygral,licz_stat_gracza2);
+                  if ((wygral<>gracz1)and(wygral<>gracz2)) then
+                   begin
+                    strzal_gracz2(wygral,licz_stat_gracza1);
+                   end;
+            until ((wygral=gracz1)or(wygral=gracz2));
+
+            if (wygral=gracz1) then
+            begin
+                 setcolor(15);
+                 OutTextXY(20, 300,'KONIEC! WYGRAL GRACZ NR 1!');
+                 delay(5000);
+                 setcolor(0);
+                 OutTextXY(20, 300,'KONIEC! WYGRAL GRACZ NR 1!');
+                 setcolor(15);
+            end;
+
+            if (wygral=gracz2) then
+            begin
+                 setcolor(15);
+                 OutTextXY(20, 300,'KONIEC! WYGRAL GRACZ NR 2!');
+                 delay(5000);
+                 setcolor(0);
+                 OutTextXY(20, 300,'KONIEC! WYGRAL GRACZ NR 2!');
+                 setcolor(15);
+            end;
+
+
+            repeat
+                  setcolor(15);
+                  OutTextXY(20, 300,'JESZCZE RAZ? 0 -ZAKONCZ, 1 -GRAJ DALEJ :  ');
+                  read(kon);
+                  setcolor(0);
+                  OutTextXY(20, 300,'JESZCZE RAZ? 0 -ZAKONCZ, 1 -GRAJ DALEJ :  ');
+                  setcolor(15);
+
+            until ((kon=0)or(kon=1));
+
+
+          end;
+
+    until (kon=0);
+/////////////koniec gry//////////////
+    cleardevice();
+            setcolor(15);
+            OutTextXY(20, 50,'ZAMYKANIE... ');
+            delay(2500);
+
+end.

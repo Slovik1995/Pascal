@@ -1,0 +1,31 @@
+program prosta_gra;
+uses crt,dos;
+var
+
+pobr: integer;
+wyl: integer;
+x: integer;
+k: integer;
+begin
+repeat
+write('podaj liczbe calkowita z przedzialu 0-9: ');
+randomize;
+wyl := random(10);
+while(pobr<>wyl) do begin
+
+
+read(pobr);
+if (pobr=wyl) then begin
+writeln('GRATULACJE! Jeszcze raz.');
+writeln;
+end
+else
+if (pobr>wyl) then begin
+write('Za duzo! ');
+end
+else
+write('Za malo! ');
+end;
+
+until false;
+end.

@@ -1,0 +1,134 @@
+program zamiana_systemow_liczbowych;
+
+uses dos, crt, sysutils;
+
+var
+  nnn: boolean;
+  tab2: array [1..100] of integer;
+  skip5,skip3,sa,yy, sb,u,m,v,pot,wyn,i,k,x: integer;
+  s: string;
+  rr: char;
+///////////////////////////////////////////////////////    
+begin
+ repeat
+  clrscr();     
+   repeat       
+    skip3:=1;                                                                         
+    Write('Wybierz podstawe systemu ktory chcesz zamienic (od 2 do 16) :  ');        
+    readln(sa);                                                                      
+    writeln();                                                                        
+    skip3:=1;                                                                        
+    if ((sa<2) or (sa>16)) then begin write('Zla liczba! '); skip3:=0; end;          
+      if skip3=1 then                                                                
+      begin                                                                          
+        repeat                           
+          skip3:=1;                                                                  
+          Write('Wybierz podstawe systemu na ktory chcesz zamienic:  ');              
+          readln(sb);                                                                 
+          writeln();                                                                  
+          if ((sb<2) or (sb>16)) then begin write('Zla liczba! '); skip3:=0; end;     
+        until(skip3=1);                                                               
+      end;                                                                            
+ until(skip3=1);                                                                
+  ///////////////////////////////////////////////////
+  skip5:=1;
+
+                      
+      begin
+            write('Podaj liczbe w systemie o podstawie '); writeln(sa); write('(w przedz. od 0 do ');  
+            case sa of                                                                                   
+            2 : write('1111111111111111111111111111111)');                                               
+            3 : write('12112122212110202101)');                                                          
+            4 : write('1333333333333333)');                                                             
+            5 : write('13344223434042)');                                                               
+            6 : write('553032005531)');                                                                 
+            7 : write('104134211161)');                                                                 
+            8 : write('17777777777)');                                                                 
+            9 : write('5478773671)');                                                                   
+            10 : write('2147483647)');                                                                
+            11 : write('A02220281)');                                                                   
+            12 : write('4BB2308A7)');                                                                    
+            13 : write('282BA4AAA)');                                                                  
+            14 : write('1652CA931)');                                                                    
+            15 : write('C87E66B7)');                                                                   
+            16 : write('7FFFFFFF)');                                                                   
+            end;
+            write(':  ');
+            read(s);            
+            writeln();
+            k:=length(s);       
+            wyn:=0;             
+            pot:=1;
+
+
+            for i:=k downto 1 do    
+            begin
+               nnn:=true;
+
+               if(( s[i]='A') or (s[i]='a')) then begin x:=10; nnn:=false; end;  
+               if(( s[i]='B') or (s[i]='b')) then begin x:=11; nnn:=false; end;  
+               if(( s[i]='C') or (s[i]='c')) then begin x:=12; nnn:=false; end;  
+               if(( s[i]='D') or (s[i]='d')) then begin x:=13; nnn:=false; end;  
+               if(( s[i]='E') or (s[i]='e')) then begin x:=14; nnn:=false; end;  
+               if(( s[i]='F') or (s[i]='f')) then begin x:=15; nnn:=false; end;  
+
+               if nnn then begin x:= StrToInt(s[i]); end;                
+                                                                          
+               if ((x>=sa) and (skip5=1)) then begin writeln('Podales zla liczbe'); skip5:=0; break; end;
+               x:=x*pot;                     
+               wyn:=wyn+x;                   
+               pot:=pot*sa;                  
+            end;
+
+          if ((sb=10) and (skip5=1)) then begin write('sSzukana liczba to:  '); writeln(wyn); end;   
+       end;                                                                                         
+
+
+  if skip5=1 then begin                                       
+///////////////////////////////////////////////////////     
+  if sb<>10 then                                                   
+      begin
+         m:=wyn;                                            
+         v:=1;
+
+           repeat                                             
+               yy:=(m mod sb);                                 
+               tab2[v]:=yy;                                    
+               m:=(m div sb);                                 
+               v:=v+1;                                        
+           until m=0;                                         
+
+         write('Szukana liczba to:  ');
+
+         for u:=v-1 downto 1 do                                   
+           begin                                                   
+                if tab2[u]<10 then begin write(tab2[u]); end;      
+                if tab2[u]>9 then                                  
+              begin                                            
+                if tab2[u]=10 then begin write('A'); end;      
+                if tab2[u]=11 then begin write('B'); end;       
+                if tab2[u]=12 then begin write('C'); end;       
+                if tab2[u]=13 then begin write('D'); end;      
+                if tab2[u]=14 then begin write('E'); end;       
+                if tab2[u]=15 then begin write('F'); end;      
+              end;                                             
+
+           end;
+      end;
+
+  end;
+///////////////////////    
+
+ writeln();
+ writeln();
+ write('Czy kontynuowac? (n\t):  ');                                    
+    repeat                          
+      rr:=readkey();                                               
+    until ((rr='n') or (rr='t')) ;                              
+ until rr='n';
+
+end.
+
+ 
+
+ 

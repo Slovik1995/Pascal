@@ -1,0 +1,116 @@
+program lista_dwukier;
+uses dos, crt;
+type wsk = ^kolos;
+
+kolos = record
+znak : char;
+nastepny : ^kolos;
+poprzedni : ^kolos;
+end;
+
+  var
+   a,b:char;
+   koniec : wsk;
+
+   war,i : integer;
+   wyraz : string;
+
+///////////////////////////////////////
+function isempty(pointer: wsk): integer;
+begin
+if (pointer=nil) then begin isempty:=0; end
+else isempty:=1;
+
+end;
+
+//////////////////////////////////////
+procedure pushfront(var koniec : wsk; a : char);
+var nowy : wsk;
+begin
+
+new(nowy);
+
+
+nowy^.znak:=a;
+if (koniec<>nil) then
+begin
+nowy^.nastepny := nil;
+koniec^.nastepny := nowy;
+nowy^.poprzedni:=koniec;
+koniec:=koniec^.nastepny;
+end
+
+else
+begin
+koniec:=nowy;
+nowy^.nastepny:=nil;
+nowy^.poprzedni:=nil;
+end;
+
+end;
+/////////////////////////////////////////
+
+function pop(var koniec : wsk) : char;
+var
+znaczek : char;
+begin
+if (koniec<>nil) then
+begin
+znaczek:=koniec^.znak;
+koniec:=koniec^.poprzedni;
+if (koniec<>nil) then koniec^.nastepny:=nil;
+pop:=znaczek;
+end
+else pop:='a';
+end;
+/////////////////////////////////////
+
+/////////////////////////////////////
+
+////////////////////////////////////
+begin
+while (true) do begin
+
+
+         koniec:=nil;
+         writeln('Podaj wyrazenie: ');
+         writeln();
+         war:=1;
+         read(wyraz);
+          readln;            //<----pobiera znak nowej linii i dzieki temu funkcja nie ,,kreci sie w kolko''
+
+         i:=1;
+          while ((war=1)and(i<=length(wyraz))) do
+                begin
+
+
+                      a:=wyraz[i];
+
+                if (i<=length(wyraz)) then
+                   begin
+                   if ((a='{')or(a='(')or(a='[')) then begin pushfront(koniec, a);  end
+
+                   else if (a='}')or(a=')')or(a=']') then
+                        begin
+                        if (isempty(koniec)=0) then war:=0;
+                        b:=pop(koniec);
+
+                        if (((a='}')and(b<>'{'))or((a=')')and(b<>'('))or((a=']')and(b<>'['))) then
+                             begin
+                              writeln('WYRAZENIE JEST ZLE!');
+                              war:=0;
+                             end;
+                        end
+                   else begin writeln('Podales zly znak.'); war:=0; end;
+                   end;
+
+                 i:=i+1;
+                end;
+          if ((i-1=length(wyraz))and(war=1)and(isempty(koniec)=0)) then begin writeln('wyrazenie jest ok'); war:=0; end
+          else if ((i-1=length(wyraz))and(war=1)) then begin writeln('WYYRAZENIE JEST ZLE!'); end;
+
+
+
+end;
+
+end.

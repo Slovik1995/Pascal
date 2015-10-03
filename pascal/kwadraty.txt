@@ -1,0 +1,120 @@
+program animacja;
+uses dos, crt;
+var  liczba,kier, sr_wys,sr_szer,i,j,szer, wys : integer;
+     tab: array of array of integer;
+type
+     xxx = array of array of integer;
+
+
+function zmien(wys : integer; szer: integer; sr_wys: integer; sr_szer: integer;var kier: integer; var tab: xxx; var liczba : integer): integer;
+var i,j : integer;
+begin
+if (kier=1) then
+begin
+     for i:=sr_wys-liczba to sr_wys+liczba do
+     begin
+          for j:=sr_szer-liczba to sr_szer+liczba do
+          begin
+               tab[i][j]:=2;
+          end;
+     end;
+     if (liczba>1) then begin
+     for i:=sr_wys-liczba+1 to sr_wys+liczba-1 do
+     begin
+          for j:=sr_szer-liczba+1 to sr_szer+liczba-1 do
+          begin
+               tab[i][j]:=1;
+          end;
+     end;
+     end
+     else begin tab[sr_wys][sr_szer]:=1; end;
+end;
+if (kier=0) then
+begin
+    for i:=sr_wys-liczba-1 to sr_wys+liczba+1 do
+     begin
+          for j:=sr_szer-liczba-1 to sr_szer+liczba+1 do
+          begin
+               tab[i][j]:=1;
+          end;
+     end;
+     for i:=sr_wys-liczba to sr_wys+liczba do
+     begin
+          for j:=sr_szer-liczba to sr_szer+liczba do
+          begin
+               tab[i][j]:=2;
+          end;
+     end;
+     if (liczba>0) then begin
+     for i:=sr_wys-liczba+1 to sr_wys+liczba-1 do
+     begin
+          for j:=sr_szer-liczba+1 to sr_szer+liczba-1 do
+          begin
+               tab[i][j]:=1;
+          end;
+     end;
+
+     end;
+
+
+end;
+
+if ((sr_szer+liczba=szer-1) or (sr_wys+liczba=wys-1)) then begin kier:=0; end;
+if (liczba=0) then begin kier:=1;  end;
+if (kier=1) then begin liczba:=liczba+1; end;
+if (kier=0) then begin liczba:=liczba-1; end;
+zmien:=0;
+end;
+
+
+function rysuj(wys: integer; szer : integer; tab: xxx) : integer;
+var i,j: integer;
+begin
+for i:=0 to wys-1 do
+begin
+   for j:=0 to szer-1 do
+   begin
+     if (tab[i][j]=1) then write('o ');
+     if (tab[i][j]=2) then write('X ');
+
+   end;
+    writeln;
+  end;
+rysuj:=0;
+end;
+
+begin
+repeat
+write('Podaj szer (liczba nieparzysta):  ');
+readln(szer);
+clrscr;
+until ((szer mod 2)<>0);
+repeat
+write('Podaj wys (liczba nieparzysta):  ');
+readln(wys);
+clrscr;
+until ((wys mod 2)<>0);
+
+setlength(tab, wys, szer);
+
+for i:=0 to wys-1 do
+begin
+  for j:=0 to szer-1 do
+  begin
+    tab[i][j]:=1;
+  end;
+end;
+
+sr_wys:=(wys div 2);
+sr_szer:=(szer div 2);
+kier:=0;
+liczba:=0;
+
+repeat
+zmien(wys, szer, sr_wys, sr_szer, kier, tab, liczba);
+rysuj(wys,szer,tab);
+delay(300);
+clrscr;
+until false;
+
+end.

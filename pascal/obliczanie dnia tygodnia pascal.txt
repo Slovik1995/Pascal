@@ -1,0 +1,47 @@
+program oblicz_dzien;
+uses dos, crt;
+var  i,x,dzien, miesiac, rok : integer;
+
+begin
+while (true) do begin
+x:=1;
+write('Podaj dzien [1-31]: ');
+read(dzien);
+write('Podaj miesiac [1-12]: ');
+read(miesiac);
+write('Podaj rok [1991-2099]: ');
+read(rok);
+
+for i:=1991 to (rok-1) do
+begin
+  if ((((i mod 4)=0) and ((i mod 100)<>0))or((i mod 400)=0)) then begin x:=x+366; end
+  else x:=x+365;
+end;
+
+for i:=1 to miesiac-1 do
+begin
+if ((i=1)or(i=3)or(i=5)or(i=7)or(i=8)or(i=10)or(i=12)) then x:=x+31;
+if (i=2) then
+     begin
+       if ((((rok mod 4)=0) and ((rok mod 100)<>0))or((rok mod 400)=0)) then begin x:=x+29; end
+       else x:=x+28;
+     end;
+if ((i=4)or(i=6)or(i=9)or(i=11)) then x:=x+30;
+end;
+
+x:=x+dzien;
+x:=x mod 7;
+writeln;
+if (x=1) then write('PONIEDZIALEK');
+if (x=2) then write('WTOREK');
+if (x=3) then write('SRODA');
+if (x=4) then write('CZWARTEK');
+if (x=5) then write('PIATEK');
+if (x=6) then write('SOBOTA');
+if (x=0) then write('NIEDZIELA');
+
+writeln; writeln('----------------------');
+
+end;
+readkey;
+end.

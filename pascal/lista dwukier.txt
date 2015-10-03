@@ -1,0 +1,208 @@
+program lista_dwukier;
+uses dos, crt;
+type wsk = ^kolos;
+
+kolos = record
+nazwisko : string;
+ocena : integer;
+nastepny : ^kolos;
+poprzedni : ^kolos;
+end;
+
+  var
+   a:integer;
+   wsk_pom,pocz : wsk;
+   x:char;
+
+
+///////////////////////////////////////
+procedure pushback();
+var nowy : wsk;
+begin
+
+new(nowy);
+write('Podaj nazwe: ');
+
+read(nowy^.nazwisko);
+read(x);
+read(x);
+write('Podaj ocene: ');
+read(nowy^.ocena);
+read(x);
+read(x);
+nowy^.nastepny := pocz;
+pocz := nowy;
+nowy^.poprzedni:=nil;
+end;
+//////////////////////////////////////
+procedure dodaj_pocz(var koniec : wsk);
+var nowy : wsk;
+begin
+
+new(nowy);
+write('Podaj nazwisko: ');
+
+read(nowy^.nazwisko);
+read(x);
+read(x);
+write('Podaj ocene: ');
+read(nowy^.ocena);
+read(x);
+read(x);
+nowy^.nastepny := nil;
+koniec:= nowy;
+nowy^.poprzedni:=nil;
+pocz:=nowy;
+
+end;
+//////////////////////////////////////
+procedure pushfront(var koniec : wsk);
+var nowy : wsk;
+begin
+
+new(nowy);
+write('Podaj nazwisko: ');
+
+read(nowy^.nazwisko);
+read(x);
+read(x);
+write('Podaj ocene: ');
+read(nowy^.ocena);
+read(x);
+read(x);
+nowy^.nastepny := nil;
+koniec^.nastepny := nowy;
+nowy^.poprzedni:=koniec;
+koniec:=koniec^.nastepny;
+
+end;
+/////////////////////////////////////////
+procedure wyszukaj();
+var
+wskaznik : wsk;
+begin
+wskaznik:=pocz;
+if (wskaznik<>nil) then
+begin
+while (wskaznik^.nastepny<>nil) do
+begin
+wskaznik:=wskaznik^.nastepny;
+end;
+pushfront(wskaznik);
+end
+
+else if (wskaznik=nil) then dodaj_pocz(pocz);
+
+
+end;
+////////////////////////////////////
+procedure wyswietl();
+var wss : wsk;
+begin
+wss:=pocz;
+writeln;
+while(wss<>Nil) do
+begin
+write(wss^.nazwisko,'  ');
+writeln(wss^.ocena);
+wss:=wss^.nastepny;
+
+end;
+writeln;
+
+end;
+/////////////////////////////////////
+procedure usun_koniec();
+var
+wskaznik : wsk;
+begin
+wskaznik:=pocz;
+
+if ((wskaznik<>nil)and(wskaznik^.nastepny<>NIl)) then
+   begin
+     while (wskaznik^.nastepny^.nastepny<>Nil) do
+           begin
+              wskaznik:=wskaznik^.nastepny;
+           end;
+     dispose(wskaznik^.nastepny);
+     wskaznik^.nastepny:=nil;
+
+
+   end
+
+else if ((wskaznik<>nil)and(wskaznik^.nastepny=nil)) then begin dispose(pocz); pocz:=nil; end
+else wskaznik:=nil;
+end;
+/////////////////////////////////////
+procedure usun_poczatek();
+var
+wskaznik : wsk;
+begin
+wskaznik:=pocz;
+
+if (wskaznik<>nil) then
+  begin
+
+   wskaznik:=wskaznik^.nastepny;
+   dispose(pocz);
+   pocz:=nil;
+   if (wskaznik<>nil) then wskaznik^.poprzedni:=nil;
+   pocz:=wskaznik;
+ end;
+
+end;
+/////////////////////////////////////
+procedure znajdz_el();
+var
+   min, max : integer;
+begin
+if (pocz=nil) then begin writeln('Lista jest pusta!'); end
+else
+    wsk_pom:=pocz;
+    min:=wsk_pom^.ocena;
+    max:=wsk_pom^.ocena;
+    while(wsk_pom^.nastepny<>nil) do
+         begin
+          wsk_pom:=wsk_pom^.nastepny;
+          if (wsk_pom^.ocena<min) then min:=wsk_pom^.ocena;
+          if (wsk_pom^.ocena>max) then max:=wsk_pom^.ocena;
+         end;
+    writeln('Najmniejsza ocena: ',min);
+    writeln('Najwieksza ocena: ',max);
+end;
+////////////////////////////////////
+begin
+ pocz:=nil;
+ while (true) do
+ begin
+ clrscr;
+ writeln('1 - Dodaj element do konca listy');
+ writeln('2 - Dodaj element do poczatku listy');
+ writeln('3 - Wyswietl liste');
+ writeln('4 - Usun ostatni element listy');
+ writeln('5 - Usun pierwszy element listy');
+ writeln('6 - Znajdz min i max');
+ writeln('7 - Wyjscie');
+ writeln;
+
+ read(a);
+ read(x);
+ read(x);
+ if (a=1) then wyszukaj();
+ if (a=2) then pushback();
+ if (a=3) then wyswietl();
+ if (a=4) then usun_koniec();
+ if (a=5) then usun_poczatek();
+ if (a=6) then znajdz_el();
+ if (a=7) then exit;
+ writeln;
+ write('Wcisnij dowolny klawisz');
+ readkey;
+
+ end;
+ readkey();
+end.
+
+
+
+
